@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/atlys-assign/static/css/main.88006c0e.css",
+    "main.js": "/atlys-assign/static/js/main.6127a8ae.js",
+    "static/js/453.092a4899.chunk.js": "/atlys-assign/static/js/453.092a4899.chunk.js",
+    "static/media/logo.svg": "/atlys-assign/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "static/media/grp-icon.svg": "/atlys-assign/static/media/grp-icon.0326df75acfaf840f5eb640d209111e7.svg",
+    "index.html": "/atlys-assign/index.html",
+    "main.88006c0e.css.map": "/atlys-assign/static/css/main.88006c0e.css.map",
+    "main.6127a8ae.js.map": "/atlys-assign/static/js/main.6127a8ae.js.map",
+    "453.092a4899.chunk.js.map": "/atlys-assign/static/js/453.092a4899.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.88006c0e.css",
+    "static/js/main.6127a8ae.js"
+  ]
+}
