@@ -13,7 +13,7 @@
   z-index: -1; 
 }
 
-.container {
+.app-container {
   position: relative; 
   z-index: 1; 
 }

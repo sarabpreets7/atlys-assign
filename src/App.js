@@ -6,7 +6,7 @@ function App() {
   return (
     <>
     <div className="background-container"></div>
-    <div className='container'>
+    <div className='app-container'>
       <CustomFunctions/>
     </div>
     </>

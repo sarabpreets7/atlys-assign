@@ -3,17 +3,18 @@ import "../Styles/CustomFunc.css";
 import FuncIcon from '../Assets/grp-icon.svg';
 
 function CustomFunctions() {
-  const [initialValue, setInitialValue] = useState(2); // Initial value (x)
+  const [initialValue, setInitialValue] = useState(2); // initial value
   const [functions, setFunctions] = useState([
-    { id: 1, equation: "x^2", output: 0 },
-    { id: 2, equation: "x+4", output: 0 },
-    { id: 4, equation: "x*2", output: 0 },
-    { id: 3, equation: "x^2+20", output: 0 },
-    { id: 5, equation: "x^2", output: 0 },
-   
+    { id: 1, equation: "x^2", output: 0, position: { row: 1, col: 1 } },
+    { id: 2, equation: "x+4", output: 0, position: { row: 1, col: 2 } },
+    { id: 4, equation: "x*2", output: 0, position: { row: 2, col: 2 } },
+    { id: 5, equation: "x^2", output: 0, position: { row: 2, col: 3 } },
+    { id: 3, equation: "x^2+20", output: 0, position: { row: 1, col: 3 } }, 
   ]);
+
   const [finalOutput, setFinalOutput] = useState(0);
-  const cardRefs = useRef([]); //store references to the cards
+  const cardRefs = useRef([]); 
+  
   const [lines, setLines] = useState([]);
   
   const customOrder = [1, 2, 4, 5, 3];
@@ -23,7 +24,7 @@ function CustomFunctions() {
       const sanitizedEquation = equation.replace(/\^/g, "**");
       return Function("x", `return ${sanitizedEquation}`)(x);
     } catch (error) {
-      return NaN; // Invalid equation
+      return NaN; // invalid equation
     }
   };
 
@@ -37,7 +38,7 @@ function CustomFunctions() {
     });
 
     setFunctions(updatedFunctions);
-    setFinalOutput(currentInput); // Set final output
+    setFinalOutput(currentInput); //final output
   };
 
   useEffect(() => {
@@ -46,51 +47,52 @@ function CustomFunctions() {
 
   useEffect(() => {
     const updateLines = () => {
-      const svgContainer = document.querySelector(".link");
-      const svgRect = svgContainer.getBoundingClientRect(); // Get SVG container offset
-  
-      const newLines = [];
-      cardRefs.current.forEach((card, index) => {
-        if (card) {
+        const svgContainer = document.querySelector(".link");
+        const svgRect = svgContainer?.getBoundingClientRect();
+      
+        if (!svgContainer || !svgRect) return; // Early exit if container or rect is missing
+      
+        const newLines = [];
+        cardRefs.current.forEach((card, index) => {
+          if (!card) return;
+      
           const outputElement = card.querySelector(".cards-chaining-output .chaining-circle");
           const nextCard = cardRefs.current[index + 1];
+      
+          if (!outputElement || !nextCard) return;
+      
+          const nextInputElement = nextCard.querySelector(".cards-chaining-input .chaining-circle");
+          if (!nextInputElement) return;
+      
+          const outputRect = outputElement.getBoundingClientRect();
+          const inputRect = nextInputElement.getBoundingClientRect();
+      
+          const startX = outputRect.left + outputRect.width / 2 - svgRect.left;
+          const startY = outputRect.top + outputRect.height / 2 - svgRect.top;
+          const endX = inputRect.left + inputRect.width / 2 - svgRect.left;
+          const endY = inputRect.top + inputRect.height / 2 - svgRect.top;
+      
+          const controlPointX1 = startX + (endX - startX) / 3;
+          const controlPointY1 = startY + 50;
+          const controlPointX2 = endX - (endX - startX) / 3;
+          const controlPointY2 = endY - 50;
+      
+          newLines.push({
+            startX,
+            startY,
+            controlPointX1,
+            controlPointY1,
+            controlPointX2,
+            controlPointY2,
+            endX,
+            endY,
+          });
+        });
+      
+        setLines(newLines);
+      };
   
-          if (nextCard) {
-            const nextInputElement = nextCard.querySelector(".cards-chaining-input .chaining-circle");
-  
-            const outputRect = outputElement.getBoundingClientRect();
-            const inputRect = nextInputElement.getBoundingClientRect();
-  
-            // Calculate positions relative to the SVG container
-            const startX = outputRect.left + outputRect.width / 2 - svgRect.left;
-            const startY = outputRect.top + outputRect.height / 2 - svgRect.top;
-            const endX = inputRect.left + inputRect.width / 2 - svgRect.left;
-            const endY = inputRect.top + inputRect.height / 2 - svgRect.top;
-  
-            // Adjust control points for a smooth curve
-            const controlPointX1 = startX + (endX - startX) / 3;
-            const controlPointY1 = startY + 50; // Adjust curvature
-            const controlPointX2 = endX - (endX - startX) / 3;
-            const controlPointY2 = endY - 50; // Adjust curvature
-  
-            newLines.push({
-              startX,
-              startY,
-              controlPointX1,
-              controlPointY1,
-              controlPointX2,
-              controlPointY2,
-              endX,
-              endY,
-            });
-          }
-        }
-      });
-  
-      setLines(newLines);
-    };
-  
-    updateLines(); // Initial calculation
+    updateLines(); 
     window.addEventListener("resize", updateLines);
   
     return () => {
@@ -107,10 +109,10 @@ function CustomFunctions() {
                 <path
                     key={idx}
                     d={`M${line.startX},${line.startY} C${line.controlPointX1},${line.controlPointY1} ${line.controlPointX2},${line.controlPointY2} ${line.endX},${line.endY}`}
-                    stroke="rgba(135, 206, 250, 0.8)" // Light blue with slight opacity
+                    stroke="rgba(174, 204, 250, 1)" 
                     fill="none"
-                    strokeWidth="6" // Thicker stroke for better visibility
-                    strokeLinecap="round" // Rounded edges for smooth curves
+                    strokeWidth="6" 
+                    strokeLinecap="round" 
                 />
             ))}
         </svg>
@@ -119,7 +121,10 @@ function CustomFunctions() {
      
       {/* .sort((a, b) => a.id - b.id) */}
         {functions.map((func, index) => (
-            <div className={`function-card-container ${index == 0?'first-card':index == (functions.length-1)?'last-card':''}`}>
+            <div key={func.id} className={`function-card-container ${index == 0?'first-card':index == (functions.length-1)?'last-card':''}`} style={{
+                gridRow: func.position.row,
+                gridColumn: func.position.col,
+              }}>
         <div
             className="function-card"
             key={func.id}
@@ -183,7 +188,7 @@ function CustomFunctions() {
                             <label>Final Output (y):</label>
                             <input
                                 type="number"
-                                value={functions[functions.length-1].output}
+                                value={finalOutput}
                                 
                             />
                         </div>
@@ -192,10 +197,10 @@ function CustomFunctions() {
         </div>
         ))}
 
-        <div className="final-output">
+        {/* <div className="final-output">
           <h3>Final Output:</h3>
           <div>{finalOutput}</div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
